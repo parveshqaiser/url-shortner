@@ -1,0 +1,23 @@
+{
+	"name": "url-shortner",
+	"version": "1.0.0",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"test": "",
+		"start": "node --watch index.js",
+		"db:generate": "drizzle-kit generate",
+    	"db:migrate": "drizzle-kit migrate",
+    	"db:push": "drizzle-kit push"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"dependencies": {
+		"drizzle-kit": "^0.31.10",
+		"drizzle-orm": "^0.45.2",
+		"express": "^5.2.1",
+		"pg": "^8.21.0"
+	}
+}
