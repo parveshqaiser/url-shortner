@@ -5,6 +5,7 @@ import { userTable } from "../models/user.schema.js";
 import { eq } from "drizzle-orm";
 import {randomBytes} from "node:crypto"
 import { loginValidation, signupValiadation } from "../../validation.js";
+import jwt from "jsonwebtoken";
 
 
 const router = express.Router();
@@ -83,10 +84,19 @@ router.post("/login", async(req, res)=>{
             });
         }
 
+        let payload = {
+            id : user.id,
+            firstname : user.firstname
+        };
+
+        let token = jwt.sign(payload,"superman",{expiresIn:"1h"})
+
+
         res.status(200).json({
             message : "Login Successful",
-            success : true
-        })
+            success : true,
+            token : token
+        });
 
     } catch (error) {
         console.error("erro in here ********** ", error);
