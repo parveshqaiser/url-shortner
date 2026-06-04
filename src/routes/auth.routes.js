@@ -1,9 +1,10 @@
 
 import express from "express";
-
 import { db } from "../config/db.js";
 import { userTable } from "../models/user.schema.js";
 import { eq } from "drizzle-orm";
+import {randomBytes} from "node:crypto"
+import { signupValiadation } from "../../validation.js";
 
 
 const router = express.Router();
@@ -12,9 +13,16 @@ router.post("/signup", async(req, res)=>{
 
     try {
         
-        let {firstname, lastname, email, pwd} = req.body;
+        let validationResult = await signupValiadation.safeParseAsync(req.body);
 
-        console.log("******* ", req.body);
+        if (!validationResult.success) {
+            return res.status(400).json({
+                success: false,
+                errors: validationResult.error.issues
+            });
+        }
+
+        let {firstname, lastname, email, pwd} = validationResult.data;
 
         let [user] = await db.select().from(userTable).where(eq(userTable.email, email));
 
@@ -22,6 +30,8 @@ router.post("/signup", async(req, res)=>{
             return res.status(400).json({message : `User exist with the EMAIL : ${email}`, success : false});
         }
 
+
+        let salt = randomBytes(256).toString("hex");
 
         let [insert] = await db.insert(userTable).values({
             firstname,
