@@ -7,3 +7,9 @@ export let signupValiadation = z.object({
     email: z.string().trim().email("Invalid email"),
     pwd: z.string().trim().min(3, "Password must be at least 3 characters")
 });
+
+
+export let loginValidation = z.object({
+    email : z.string().trim().email("Invalid email"),
+    pwd: z.string().trim().nonempty("Passowrd Required")
+});

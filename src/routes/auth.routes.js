@@ -4,7 +4,7 @@ import { db } from "../config/db.js";
 import { userTable } from "../models/user.schema.js";
 import { eq } from "drizzle-orm";
 import {randomBytes} from "node:crypto"
-import { signupValiadation } from "../../validation.js";
+import { loginValidation, signupValiadation } from "../../validation.js";
 
 
 const router = express.Router();
@@ -51,6 +51,52 @@ router.post("/signup", async(req, res)=>{
         });
     }
 });
+
+
+router.post("/login", async(req, res)=>{
+    try {
+        
+        let validationResult = await loginValidation.safeParseAsync(req.body);
+
+        if (!validationResult.success) {
+            return res.status(400).json({
+                success: false,
+                errors: validationResult.error.issues
+            });
+        }
+
+        let {email, pwd} = validationResult.data;
+
+        let [user] = await db.select().from(userTable).where(eq(userTable.email, email));
+
+        if(!user){
+            return res.status(400).json({
+                message : "Invalid Login Credentials", 
+                success : false
+            });
+        }
+
+        if(user.pwd != pwd){
+            return res.status(400).json({
+                message : "Invalid Passowrd", 
+                success : false
+            });
+        }
+
+        res.status(200).json({
+            message : "Login Successful",
+            success : true
+        })
+
+    } catch (error) {
+        console.error("erro in here ********** ", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
+})
 
 
 export default router;
