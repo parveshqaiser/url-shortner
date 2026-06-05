@@ -7,7 +7,6 @@ import {randomBytes} from "node:crypto"
 import { loginValidation, signupValiadation } from "../../validation.js";
 import jwt from "jsonwebtoken";
 
-
 const router = express.Router();
 
 router.post("/signup", async(req, res)=>{
