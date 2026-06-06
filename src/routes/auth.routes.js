@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import {randomBytes} from "node:crypto"
 import { loginValidation, signupValiadation } from "../../validation.js";
 import jwt from "jsonwebtoken";
+import { userAuthentication } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -51,7 +52,6 @@ router.post("/signup", async(req, res)=>{
         });
     }
 });
-
 
 router.post("/login", async(req, res)=>{
     try {
@@ -105,7 +105,30 @@ router.post("/login", async(req, res)=>{
             message: "Internal Server Error"
         });
     }
+});
+
+router.get("/user",userAuthentication, async(req, res)=>{
+
+    try {
+        let userId = req.user.id;
+
+        let [user] = await db.select().from(userTable).where(eq(userTable.id,userId));
+
+        res.status(200).json({
+            message : "User Fetch Successful",
+            success : true,
+            data : user
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
 })
+
+
 
 
 export default router;
