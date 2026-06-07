@@ -1,6 +1,7 @@
 
 import express from "express";
 import authRoutes from "./src/routes/auth.routes.js";
+import urlRoutes from "./src/routes/url.routes.js";
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.get("/", (req, res)=>{
 
 
 app.use("/", authRoutes);
+app.use("/", urlRoutes);
 
 app.listen(6700, ()=>{
     console.log("Server is up at port no http://localhost:6700");
