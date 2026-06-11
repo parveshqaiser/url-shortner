@@ -11,7 +11,7 @@ export let signupValiadation = z.object({
 
 export let loginValidation = z.object({
     email : z.string().trim().email("Invalid email"),
-    pwd: z.string().trim().nonempty("Passowrd Required")
+    pwd: z.string().trim().nonempty("Password Required")
 });
 
 export let shortenSchema = z.object({
