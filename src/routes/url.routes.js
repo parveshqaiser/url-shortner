@@ -48,17 +48,42 @@ router.post("/create/shorturl",userAuthentication, async(req, res)=>{
     }
 });
 
+// get all urls creatd by user
+router.get("/allurls", userAuthentication, async(req, res)=>{
+
+    try {
+        let loggedInUser = req.user.id;
+        
+        let result = await db.select().from(urlTable).where(eq(urlTable.userId, loggedInUser))
+
+        res.status(200).json({
+            message : "all url fetched",
+            success : true,
+            data : result
+        });
+        
+    } catch (error) {
+        console.error("erro in here ********** ", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
+});
+
+
+
+// delete url based on id
+// router.delete("/url/:id")
 
 router.get("/:codeid", async(req, res)=>{
 
     try {
         let code = req.params.codeid;
 
-        console.log("code ", code);
 
         let [result] = await db.select({targetUrl : urlTable.targetUrl}).from(urlTable).where(eq(urlTable.shortCode,code));
-
-        console.log("***** ", result);
 
         if(!result){
             return res.status(404).json({
@@ -66,8 +91,6 @@ router.get("/:codeid", async(req, res)=>{
                 success : false
             })
         }
-
-
         res.redirect(result.targetUrl);
 
     } catch (error) {
@@ -80,11 +103,5 @@ router.get("/:codeid", async(req, res)=>{
     }
 });
 
-// get all urls creatd by user
-// router.get("/allurls");
-
-
-// delete url based on id
-// router.delete("/url/:id")
 
 export default router;
