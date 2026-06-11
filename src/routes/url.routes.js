@@ -11,7 +11,7 @@ let router = express.Router();
 
 // create url
 
-router.post("/post/url",userAuthentication, async(req, res)=>{
+router.post("/create/shorturl",userAuthentication, async(req, res)=>{
     try {
         let userId = req.user.id;
         let validationResult = await shortenSchema.safeParseAsync(req.body);
@@ -47,5 +47,44 @@ router.post("/post/url",userAuthentication, async(req, res)=>{
         });
     }
 });
+
+
+router.get("/:codeid", async(req, res)=>{
+
+    try {
+        let code = req.params.codeid;
+
+        console.log("code ", code);
+
+        let [result] = await db.select({targetUrl : urlTable.targetUrl}).from(urlTable).where(eq(urlTable.shortCode,code));
+
+        console.log("***** ", result);
+
+        if(!result){
+            return res.status(404).json({
+                message : "Invalid URL",
+                success : false
+            })
+        }
+
+
+        res.redirect(result.targetUrl);
+
+    } catch (error) {
+        console.error("erro in here ********** ", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
+});
+
+// get all urls creatd by user
+// router.get("/allurls");
+
+
+// delete url based on id
+// router.delete("/url/:id")
 
 export default router;
