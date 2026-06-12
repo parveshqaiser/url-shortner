@@ -1,7 +1,7 @@
 import express from "express";
 import { db } from "../config/db.js";
 import { urlTable } from "../models/url.schema.js";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { shortenSchema } from "../../validation.js";
 import { nanoid } from "nanoid";
 import { userAuthentication } from "../middleware/auth.middleware.js";
@@ -73,9 +73,28 @@ router.get("/allurls", userAuthentication, async(req, res)=>{
 });
 
 
-
 // delete url based on id
-// router.delete("/url/:id")
+router.delete("/del/:id",userAuthentication, async(req, res)=>{
+    try {
+        let id = req.params.id;
+        let loggedInUser = req.user.id;
+
+        let [delRes] =  await db.delete(urlTable).where(and(eq(urlTable.id, id),(eq(urlTable.userId, loggedInUser))));
+
+        res.status(200).json({
+            message : "Deleted Successfully",
+            success : true,
+        });
+
+    } catch (error) {
+        console.error("erro in here ********** ", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
+});
 
 router.get("/:codeid", async(req, res)=>{
 
