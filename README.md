@@ -76,7 +76,7 @@ npm run db:migrate
 ### 5. Start Development Server
 
 ```bash
-npm run dev
+npm start
 ```
 
 Server will run at:
