@@ -27,8 +27,7 @@ export const userAuthentication = (req, res, next)=>{
         next();
         
     } catch (error) {
-        
-        console.log(  "error 123" , error)
+        console.log("error 123 " , error)
         return res.status(401).json({
             message: "Invalid or Expired Token",
             success: false
